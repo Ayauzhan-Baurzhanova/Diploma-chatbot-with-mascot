@@ -1,0 +1,63 @@
+flowchart LR
+    %% Styling - Presentation Blue Tones
+    classDef clientComp fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#082f49,font-weight:bold
+    classDef serverComp fill:#bae6fd,stroke:#0369a1,stroke-width:2px,color:#082f49,font-weight:bold
+    classDef dbComp fill:#38bdf8,stroke:#075985,stroke-width:2px,color:#f8fafc,font-weight:bold
+    classDef extComp fill:#0ea5e9,stroke:#0c4a6e,stroke-width:2px,color:#f8fafc,font-weight:bold
+
+    %% TIER 1: UNITY CLIENT (Left)
+    subgraph Unity_Client ["Tier 1: Unity Mobile Client (C# / Android)"]
+        direction TB
+        OnboardCtrl["Onboarding & Profile Controller"]
+        ChatCtrl["Chat UI & Collapsible Viewport"]
+        StoreCtrl["Store & Assignment Logger"]
+        MascotMgr["Mascot Animator & Outfit Manager"]
+        NetMgr["NetworkManager (REST Client)"]
+        SQLiteDAL["Local SQLite Data Access Layer"]
+        SQLiteDB[("Local SQLite DB")]
+    end
+
+    %% TIER 2: FASTAPI BACKEND (Middle)
+    subgraph FastAPI_Backend ["Tier 2: FastAPI Backend (Python Middleware)"]
+        direction TB
+        Router["REST API Router"]
+        RAGOrch["LangChain RAG Orchestrator<br/>(Threshold Check τ = 0.72)"]
+        EmbedSvc["Text Embedding Service"]
+        CalcTool["Deterministic Grade Calculator"]
+        PromptBldr["Persona & Prompt Builder"]
+        ETLPipe["PDF ETL & Chunking Pipeline"]
+    end
+
+    %% TIER 3: DATA & EXTERNAL APIs (Right)
+    subgraph Data_External ["Tier 3: Server Storage & External AI APIs"]
+        direction TB
+        ChromaDB[("ChromaDB Vector Store<br/>(AITU PDFs + Metadata)")]
+        OpenRouter["OpenRouter API<br/>(DeepSeek V3/3.2 LLM)"]
+    end
+
+    %% Client Internal Flows
+    OnboardCtrl & ChatCtrl & StoreCtrl --> SQLiteDAL
+    SQLiteDAL <-->|"CRUD Operations"| SQLiteDB
+    StoreCtrl -->|"Equips Outfit / Hair"| MascotMgr
+    ChatCtrl -->|"Query + Profile + Outfit ID"| NetMgr
+    NetMgr -->|"Updates Text & Links"| ChatCtrl
+    NetMgr -->|"Triggers emotion_id"| MascotMgr
+
+    %% Client-Server Network Flow
+    NetMgr <==>|"HTTPS REST / JSON Payload"| Router
+
+    %% Backend Internal Flows
+    Router --> RAGOrch
+    RAGOrch -->|"1. Generates Query Vector"| EmbedSvc
+    EmbedSvc -->|"2. Vector"| RAGOrch
+    RAGOrch <-->|"3. Top-k Semantic Search"| ChromaDB
+    RAGOrch <-->|"4a. Grade Scenario Math"| CalcTool
+    RAGOrch -->|"4b. Context + Citations + Calc Result"| PromptBldr
+    PromptBldr <-->|"5. Augmented Prompt /<br/>Structured JSON Response"| OpenRouter
+    ETLPipe -->|"Offline Indexing<br/>(chunk=1000, overlap=150)"| ChromaDB
+
+    %% Apply Styles
+    class OnboardCtrl,ChatCtrl,StoreCtrl,MascotMgr,NetMgr,SQLiteDAL clientComp
+    class Router,RAGOrch,EmbedSvc,CalcTool,PromptBldr,ETLPipe serverComp
+    class SQLiteDB,ChromaDB dbComp
+    class OpenRouter extComp

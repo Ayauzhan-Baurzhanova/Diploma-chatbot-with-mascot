@@ -1,0 +1,46 @@
+flowchart LR
+    %% Styling
+    classDef actor fill:#1e293b,stroke:#0f172a,stroke-width:2px,color:#ffffff,font-weight:bold
+    classDef usecase fill:#eff6ff,stroke:#2563eb,stroke-width:2px,color:#1e3a8a
+    classDef extcase fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f
+
+    %% Actors outside the system boundary
+    Student(["AITU Student"])
+    Admin(["Administrator"])
+
+    %% System Boundary
+    subgraph RemoodleChat_System ["RemoodleChat System Boundary"]
+        direction TB
+        UC1(["Complete Onboarding & Set Profile<br/>(Name, Boy/Girl, Year, Faculty)"])
+        UC2(["Ask Academic Policy /<br/>Syllabus Question"])
+        UC2_Inc(["View Linked Source<br/>(PDF)"])
+        UC2_Ext(["Receive Fallback Warning<br/>When Data Absent (τ &lt; 0.72)"])
+        UC3(["Calculate Hypothetical Grade /<br/>Scholarship Scenario"])
+        UC4(["Log Assignment Grade to<br/>Earn Points (1:1 Ratio)"])
+        UC5(["Purchase & Equip Mascot<br/>Outfits in Store"])
+        UC5_Ext(["Shift Remoodle-chan<br/>Speaking Persona"])
+        UC6(["Toggle Mascot Panel Visibility<br/>& Persona Settings"])
+        UC7(["Review Past Chat History"])
+        UC8(["Ingest & Vectorize Institutional<br/>PDF Documents"])
+    end
+
+    %% Actor to Use Case Associations
+    Student --> UC1
+    Student --> UC2
+    Student --> UC3
+    Student --> UC4
+    Student --> UC5
+    Student --> UC6
+    Student --> UC7
+
+    Admin --> UC8
+
+    %% UML Include / Extend Relationships
+    UC2 -. "&lt;&lt;include&gt;&gt;" .-> UC2_Inc
+    UC2_Ext -. "&lt;&lt;extend&gt;&gt;<br/>[similarity &lt; 0.72]" .-> UC2
+    UC5_Ext -. "&lt;&lt;extend&gt;&gt;<br/>[persona_shift_enabled == true]" .-> UC5
+
+    %% Apply Classes
+    class Student,Admin actor
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8 usecase
+    class UC2_Inc,UC2_Ext,UC5_Ext extcase

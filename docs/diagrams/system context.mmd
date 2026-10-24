@@ -1,0 +1,29 @@
+flowchart TB
+    %% Styling
+    classDef actor fill:#1f3a60,stroke:#0d1b2a,stroke-width:2px,color:#ffffff,font-weight:bold
+    classDef system fill:#2563eb,stroke:#1d4ed8,stroke-width:3px,color:#ffffff,font-weight:bold
+    classDef external fill:#475569,stroke:#334155,stroke-width:2px,color:#ffffff,stroke-dasharray: 5 5
+
+    %% Nodes
+    Student(["AITU Student<br/>(1st–3rd Year Undergraduate)"])
+    Admin(["System Administrator / Developer<br/>(Maintains Knowledge Base)"])
+    
+    RemoodleChat[["RemoodleChat System<br/>(Gamified Unity Mobile Client,<br/>Local SQLite & FastAPI RAG Server)"]]
+    
+    OpenRouter[("OpenRouter LLM API<br/>(DeepSeek V3 / 3.2 Inference)")]
+    AITUDocs[("AITU Institutional Documents<br/>(Academic Policy & Syllabus PDFs)")]
+
+    %% Interactions
+    Student -- "1. Submits natural language queries,<br/>logs assignment grades, customizes mascot" --> RemoodleChat
+    RemoodleChat -- "2. Returns grounded answers, inline citations,<br/>grade calculations & mascot emotion states" --> Student
+
+    Admin -- "Uploads & updates official PDFs" --> AITUDocs
+    AITUDocs -- "Ingested & vectorized via offline ETL" --> RemoodleChat
+
+    RemoodleChat -- "3. Sends augmented RAG + persona prompt<br/>(HTTPS / JSON)" --> OpenRouter
+    OpenRouter -- "4. Returns generated response + emotion_id<br/>(JSON Payload)" --> RemoodleChat
+
+    %% Apply Classes
+    class Student,Admin actor
+    class RemoodleChat system
+    class OpenRouter,AITUDocs external
