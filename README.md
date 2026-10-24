@@ -70,7 +70,7 @@ Undergraduate students at AITU currently spend between 5 and 20 minutes per inqu
 * **FR-1 (Must) — Multi-Source RAG Processing & Conflict Resolution:** Retrieve top-$k$ ($k=5$) chunks from ChromaDB with cosine similarity $\ge 0.72$, prioritizing official Academic Policy over syllabus drafts in 100% of conflicting cases.
 * **FR-2 (Must) — Deterministic Academic Scenario Calculation:** Invoke a deterministic Python calculator function (`calculate_required_final()`) for hypothetical RegMid/RegEnd/Final grade and scholarship queries with 0% arithmetic error.
 * **FR-3 (Must) — Inline Source Traceability:** Provide a reference link on 100% of non-fallback factual responses.
-* **FR-4 (Must) — User Onboarding & Gender/Profile Personalization:** Capture Name, Gender (`BOY` / `GIRL`), Study Year (`1` / `2` / `3`), and Faculty during onboarding, persist in SQLite, and inject into the prompt payload.
+* **FR-4 (Must) — User Onboarding & Gender/Profile Personalization:** Capture Name, Gender, Study Year (`1` / `2` / `3`), and Faculty during onboarding, persist in SQLite, and inject into the prompt payload.
 * **FR-5 (Must) — Assignment Grade Logger & Store Economy:** Convert manually logged assignment grades $X \in [0, 100]$ at a 1:1 ratio into in-app points (`+X P`) in SQLite to purchase and equip hairstyles and outfits.
 * **FR-6 (Should) — Dynamic Mascot Emotion & Outfit-Driven Persona:** Trigger Unity Animator transitions via `emotion_id` in `<100 ms` and shift conversational persona based on equipped outfit unless `persona_shift_enabled == false` in Settings.
 * **FR-7 (Should) — Persistent Chat History Management:** Save and load past conversation sessions locally from the SQLite `ChatMessages` table.
